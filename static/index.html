@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Local LLM Document Q&amp;A</title>
+  <meta name="description" content="Retrieval-augmented question answering over your own documents, powered by a local Ollama model." />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+</head>
+<body>
+  <a class="skip-link" href="#composer-input">Skip to question box</a>
+
+  <header class="app-bar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">§</span>
+      <div class="brand-text">
+        <h1>Document Q&amp;A</h1>
+        <p class="brand-sub">Local retrieval-augmented answers with citations</p>
+      </div>
+    </div>
+
+    <div class="app-bar-actions">
+      <span id="status-pill" class="pill pill--muted" role="status" aria-live="polite">checking…</span>
+      <button id="theme-toggle" class="icon-button" type="button" title="Toggle colour theme" aria-label="Toggle colour theme">◐</button>
+      <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle panel" aria-label="Toggle panel" aria-expanded="false" aria-controls="sidebar">☰</button>
+    </div>
+  </header>
+
+  <div id="banner" class="banner" role="alert" hidden></div>
+
+  <main class="layout">
+    <aside id="sidebar" class="sidebar" aria-label="Documents and settings">
+      <section class="panel">
+        <h2 class="panel-title">Add documents</h2>
+
+        <label class="dropzone" id="dropzone" for="file-input">
+          <input id="file-input" type="file" multiple
+                 accept=".pdf,.txt,.md,.markdown,.docx,.html,.htm" hidden />
+          <span class="dropzone-icon" aria-hidden="true">↑</span>
+          <span class="dropzone-text">
+            <strong>Choose files</strong> or drop them here
+            <small>PDF, DOCX, Markdown, text, HTML</small>
+          </span>
+        </label>
+
+        <details class="disclosure">
+          <summary>Paste text instead</summary>
+          <textarea id="paste-text" rows="5" placeholder="Paste content to index…"></textarea>
+          <input id="paste-name" type="text" placeholder="Source name (e.g. notes.txt)" />
+          <button id="paste-submit" class="button button--secondary" type="button">Index pasted text</button>
+        </details>
+
+        <details class="disclosure">
+          <summary>Index a server path</summary>
+          <input id="path-input" type="text" placeholder="./data/documents" />
+          <button id="path-submit" class="button button--secondary" type="button">Index path</button>
+          <p class="hint">Confined to <code>data/documents</code> unless <code>ALLOW_INGEST_ANY_PATH</code> is enabled.</p>
+        </details>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Indexed documents</h2>
+          <button id="refresh-docs" class="text-button" type="button">Refresh</button>
+        </div>
+        <ul id="document-list" class="document-list">
+          <li class="empty-state">Nothing indexed yet.</li>
+        </ul>
+        <button id="reset-index" class="text-button text-button--danger" type="button">Reset entire index</button>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Answer settings</h2>
+
+        <label class="field">
+          <span class="field-label">Passages to retrieve <output id="topk-value"></output></span>
+          <input id="topk" type="range" min="1" max="12" value="5" />
+        </label>
+
+        <label class="switch">
+          <input id="use-cache" type="checkbox" checked />
+          <span>Semantic cache</span>
+        </label>
+
+        <label class="switch">
+          <input id="use-stream" type="checkbox" checked />
+          <span>Stream the answer</span>
+        </label>
+
+        <label class="switch">
+          <input id="use-rerank" type="checkbox" checked disabled />
+          <span>Cross-encoder rerank <small>(set at startup)</small></span>
+        </label>
+      </section>
+
+      <section class="panel panel--meta">
+        <h2 class="panel-title">Runtime</h2>
+        <dl id="runtime-meta" class="meta-list"></dl>
+      </section>
+    </aside>
+
+    <section class="chat" aria-label="Conversation">
+      <div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions">
+        <article class="message message--system">
+          <div class="message-body">
+            <p>Ask a question about your documents. Answers are generated locally and every
+              claim is linked back to the passage it came from.</p>
+          </div>
+        </article>
+      </div>
+
+      <form id="composer" class="composer">
+        <label class="sr-only" for="composer-input">Your question</label>
+        <textarea id="composer-input" rows="1"
+                  placeholder="Ask something about your documents…"
+                  autocomplete="off" required></textarea>
+        <button id="send" class="button button--primary" type="submit">Ask</button>
+      </form>
+      <p class="composer-hint">
+        <kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> for a new line
+      </p>
+    </section>
+  </main>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>

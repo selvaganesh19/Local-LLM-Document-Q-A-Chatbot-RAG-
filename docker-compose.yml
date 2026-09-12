@@ -1,0 +1,97 @@
+# =============================================================================
+# Local LLM Document Q&A (RAG)
+#
+# The application container does NOT bundle Ollama.  Ollama runs on the host
+# (it wants direct GPU access and a persistent model store), and the container
+# reaches it through host.docker.internal.
+#
+#   Host setup, once:
+#     ollama pull <your-model>
+#     OLLAMA_HOST=0.0.0.0 ollama serve      # must not bind to 127.0.0.1 only
+#
+#   Then:
+#     OLLAMA_BASE_URL=http://host.docker.internal:11434 \
+#     OLLAMA_MODEL=<your-model> docker compose up --build
+#
+# A .env file next to this compose file is read automatically if present.
+# =============================================================================
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: local-llm-rag:latest
+    container_name: local-llm-rag
+    ports:
+      - "8000:8000"
+    environment:
+      # -- LLM (required) -------------------------------------------------
+      # host.docker.internal resolves to the host machine from the container.
+      # Composer reads the same .env file, so a value set there wins.
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-}
+      OLLAMA_TIMEOUT_SECONDS: ${OLLAMA_TIMEOUT_SECONDS:-120}
+      OLLAMA_NUM_CTX: ${OLLAMA_NUM_CTX:-8192}
+      OLLAMA_TEMPERATURE: ${OLLAMA_TEMPERATURE:-0.1}
+      # auto | ollama | openai - inferred from the URL when left on auto.
+      LLM_API_FLAVOR: ${LLM_API_FLAVOR:-auto}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_DISABLE_THINKING: ${LLM_DISABLE_THINKING:-true}
+
+      # -- Retrieval ------------------------------------------------------
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-BAAI/bge-small-en-v1.5}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-384}
+      RERANKER_MODEL: ${RERANKER_MODEL:-cross-encoder/ms-marco-MiniLM-L-6-v2}
+      EMBEDDING_DEVICE: ${EMBEDDING_DEVICE:-cpu}
+      RERANK_ENABLED: ${RERANK_ENABLED:-true}
+      TOP_K_FINAL: ${TOP_K_FINAL:-5}
+
+      # -- Storage (inside the container) ---------------------------------
+      CHROMA_DIR: /app/data/vectorstore
+      RAGOBSERVE_DB_PATH: /app/.ragobserve/ragobserve.db
+
+      # -- Policy ---------------------------------------------------------
+      CACHE_ENABLED: ${CACHE_ENABLED:-true}
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      RAGOBSERVE_ENABLED: ${RAGOBSERVE_ENABLED:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOG_JSON: ${LOG_JSON:-true}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-25}
+
+      # Model cache must match the mounted volume below.
+      HF_HOME: /models
+    volumes:
+      # Documents, the Chroma HNSW index and the persisted BM25 index.
+      - ./data:/app/data
+      # Downloaded embedding/reranker weights survive image rebuilds.
+      - model-cache:/models
+      # RAGObserve trace database, shared with the dashboard service.
+      - ragobserve-data:/app/.ragobserve
+    extra_hosts:
+      # Makes host.docker.internal resolve on Linux too.
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  # Optional RAGObserve dashboard:
+  #   docker compose --profile observability up
+  #   open http://localhost:5601
+  ragobserve:
+    profiles: ["observability"]
+    image: local-llm-rag:latest
+    container_name: local-llm-rag-traces
+    depends_on:
+      - app
+    command: ["ragobserve", "ui", "--host", "0.0.0.0", "--port", "5601"]
+    ports:
+      - "5601:5601"
+    environment:
+      RAGOBSERVE_PROJECT: ${RAGOBSERVE_PROJECT:-local-llm-rag}
+    volumes:
+      - ragobserve-data:/app/.ragobserve
+    working_dir: /app
+    restart: unless-stopped
+
+volumes:
+  model-cache:
+  ragobserve-data:

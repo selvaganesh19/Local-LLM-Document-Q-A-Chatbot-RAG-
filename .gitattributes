@@ -1,0 +1,17 @@
+# Git LFS
+#
+# The demo walkthrough is ~70 MB, which is past the point where a plain git blob
+# is reasonable: every clone would carry it forever, and GitHub warns above
+# 50 MB. LFS keeps the repository history small and fetches the video on demand.
+
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.webm filter=lfs diff=lfs merge=lfs -text
+
+# Binary model and archive formats, should any be added later.
+*.safetensors filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.onnx filter=lfs diff=lfs merge=lfs -text
+*.pdf filter=lfs diff=lfs merge=lfs -text
+*.docx filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text

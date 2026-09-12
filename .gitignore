@@ -1,0 +1,36 @@
+# Environments
+.env
+.env.local
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Project data (generated at runtime)
+data/vectorstore/
+data/bm25_index.pkl
+data/cache/
+.ragobserve/
+evaluation/reports/
+
+# Uploads
+uploads/
+
+# Model caches
+.cache/
+models/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

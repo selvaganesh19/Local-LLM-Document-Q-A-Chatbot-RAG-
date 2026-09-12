@@ -1,0 +1,110 @@
+ACME PLATFORM - API REFERENCE
+Version 2.4 - Last updated 3 March 2026
+
+1. OVERVIEW
+
+The Acme Platform API is a REST interface over HTTPS. All requests and responses
+use JSON, encoded as UTF-8. The current stable version is v2.
+
+Base URL: https://api.acme.example/v2
+
+2. AUTHENTICATION
+
+Every request must carry a bearer token in the Authorization header:
+
+    Authorization: Bearer <access_token>
+
+Access tokens are issued by the token endpoint and expire after 3600 seconds
+(one hour). Refresh tokens are valid for 30 days and are single use; using a
+refresh token rotates it and invalidates the previous one.
+
+Tokens must never be embedded in client-side code or committed to a repository.
+Requests with an expired token return HTTP 401 with the error code
+token_expired.
+
+3. RATE LIMITS
+
+Rate limits are applied per client identifier, not per user:
+
+  - Sustained rate: 1000 requests per hour.
+  - Burst rate: 50 requests per minute.
+
+Every response includes the following headers:
+
+    X-RateLimit-Limit: the applicable limit
+    X-RateLimit-Remaining: requests remaining in the current window
+    X-RateLimit-Reset: Unix timestamp when the window resets
+
+Exceeding a limit returns HTTP 429 with a Retry-After header giving the number
+of seconds to wait before retrying. Clients must honour Retry-After and must use
+exponential backoff rather than immediate retries.
+
+4. PAGINATION
+
+List endpoints use cursor-based pagination. The default page size is 50 items and
+the maximum page size is 200 items. Pass cursor to fetch the next page:
+
+    GET /v2/documents?limit=100&cursor=eyJpZCI6MTIzfQ
+
+Responses include a next_cursor field which is null on the final page. Cursors
+are opaque and must not be constructed by clients. Offset-based pagination is
+not supported on v2.
+
+5. ERROR FORMAT
+
+Errors follow RFC 7807 (problem+json). A 404 response looks like:
+
+    {
+      "type": "https://api.acme.example/problems/not-found",
+      "title": "Resource not found",
+      "status": 404,
+      "detail": "No document with id doc_9f2 exists.",
+      "instance": "/v2/documents/doc_9f2"
+    }
+
+Common status codes:
+
+  - 400 malformed request or invalid parameter
+  - 401 missing or invalid credentials
+  - 403 authenticated but not permitted
+  - 404 resource does not exist
+  - 409 conflict, usually a duplicate idempotency key with a different body
+  - 422 semantically invalid payload
+  - 429 rate limit exceeded
+  - 500 unexpected server error, safe to retry with backoff
+  - 503 service temporarily unavailable, honour Retry-After
+
+6. IDEMPOTENCY
+
+POST requests that create resources accept an Idempotency-Key header. Keys must
+be unique UUIDs and are retained for 24 hours. Replaying a request with the same
+key and the same body returns the original response without creating a duplicate.
+Replaying the same key with a different body returns HTTP 409.
+
+7. WEBHOOKS
+
+Webhooks deliver events to an HTTPS endpoint you register. Each delivery is
+signed with HMAC-SHA256 over the raw request body using your webhook secret; the
+signature arrives in the X-Acme-Signature header.
+
+Failed deliveries are retried 5 times with exponential backoff, starting at 30
+seconds and doubling each attempt. After the fifth failure the event is queued in
+the dead letter store and may be replayed manually for 7 days. Webhook endpoints
+must respond within 10 seconds or the delivery is treated as failed.
+
+8. REQUEST TIMEOUTS
+
+The API gateway closes connections after 30 seconds. Long-running operations
+return HTTP 202 with an operation id; poll the operations endpoint to check
+status. Polling more frequently than once every 5 seconds returns HTTP 429.
+
+9. VERSIONING
+
+The version is part of the path. v1 remains available but is deprecated and
+receives security fixes only. Breaking changes are announced at least 180 days
+before the deprecation date and are documented in the changelog.
+
+10. SUPPORT
+
+Report API defects to api-support@acme.example. Include the request id from the
+X-Request-Id response header, which is present on every response.

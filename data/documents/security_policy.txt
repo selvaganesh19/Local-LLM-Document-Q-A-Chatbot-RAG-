@@ -1,0 +1,105 @@
+ACME CORPORATION - INFORMATION SECURITY POLICY
+Document SEC-2026-04 - Effective 1 February 2026
+
+1. SCOPE
+
+This policy applies to all employees, contractors, interns and third parties who
+access Acme systems, networks or data, on any device, from any location.
+
+2. DATA CLASSIFICATION
+
+All information must be assigned one of four classifications:
+
+  - Public: may be shared freely outside Acme.
+  - Internal: may be shared within Acme; disclosure requires approval.
+  - Confidential: restricted to named individuals with a business need.
+  - Restricted: the highest classification, applying to personal data of
+    customers, payment credentials and authentication secrets.
+
+Confidential and Restricted data must be encrypted at rest using AES-256 and in
+transit using TLS 1.3 or later.
+
+3. AUTHENTICATION
+
+Passwords must be at least 14 characters and are rotated every 180 days. Reuse
+of any of the previous 12 passwords is prohibited. Multi-factor authentication
+is mandatory for all remote access, for all administrative accounts, and for any
+access to Restricted data, without exception.
+
+Shared accounts are prohibited. Service accounts must be owned by a named
+individual, documented in the service register, and reviewed every quarter.
+
+4. DEVICE SECURITY
+
+All laptops and mobile devices used for Acme work must have full disk encryption
+enabled and an approved endpoint protection agent installed. Devices must be
+patched within 14 days of a critical security update being released, and within
+30 days for high severity updates.
+
+Removable USB storage is prohibited for Confidential and Restricted data.
+Where transfer is unavoidable, use the approved managed file transfer service.
+
+5. INCIDENT REPORTING
+
+Any suspected or confirmed security incident must be reported to the Security
+team at security@acme.example within 1 hour of discovery. Incidents affecting
+Restricted data must additionally be escalated to the Data Protection Officer
+immediately.
+
+Incident responders must preserve evidence and must not attempt independent
+remediation of a suspected compromise of an administrative account.
+
+6. REGULATORY NOTIFICATION
+
+Where a personal data breach is likely to result in a risk to data subjects,
+Acme must notify the supervisory authority within 72 hours of becoming aware of
+the breach. Affected data subjects must be notified without undue delay where
+the breach is likely to result in a high risk to their rights and freedoms.
+
+7. ACCESS CONTROL
+
+Access is granted on the principle of least privilege. Access rights are
+reviewed every quarter by system owners. Access must be revoked within 24 hours
+of an employee leaving Acme, and within 4 hours for anyone holding
+administrative privileges.
+
+8. THIRD PARTIES
+
+Third parties with access to Acme data must have a signed data processing
+agreement in place before any access is granted. Third-party access entitlements
+are reviewed quarterly. Any third party processing Restricted data must provide
+evidence of an independent security assessment no older than 12 months.
+
+9. BACKUPS AND RECOVERY
+
+Production data is backed up daily with a 35 day retention window. Backups must
+be encrypted to the same standard as the source data. Restoration tests are
+performed every 6 months and the results recorded in the resilience register.
+
+10. SECURITY TRAINING
+
+All staff complete security awareness training within 30 days of joining and
+annually thereafter. Staff who handle Restricted data complete additional
+specialist training every 12 months. Failure to complete mandatory training
+within 60 days results in suspension of access to Confidential and Restricted
+systems.
+
+11. VULNERABILITY MANAGEMENT
+
+Authenticated vulnerability scans run weekly on all internet-facing systems and
+monthly on internal systems. Critical vulnerabilities must be remediated within
+14 days of identification; high severity within 30 days. Exceptions require a
+documented risk acceptance approved by the Chief Information Security Officer.
+
+12. ACCEPTABLE USE
+
+Acme systems may not be used for cryptocurrency mining, for hosting personal
+services, or for any activity that breaches export control regulations. Personal
+use of email and internet access is tolerated where it is reasonable in volume
+and does not interfere with duties.
+
+13. LOGGING AND MONITORING
+
+Authentication events, administrative actions and access to Restricted data are
+logged centrally and retained for 12 months. Logs must be protected against
+modification and reviewed for anomalies at least weekly.

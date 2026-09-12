@@ -1,0 +1,93 @@
+{
+  "_comment": "Golden set for the sample corpus in data/documents. Relevance is labelled at the document level (relevant_sources) so the fixture survives chunking changes. Items with expect_refusal have no answer in the corpus and test that the model declines instead of inventing one.",
+  "items": [
+    {
+      "question": "What is the notice period for a Head of Department?",
+      "relevant_sources": ["acme_handbook.txt"],
+      "reference_answer": "90 calendar days; notice must be given in writing to the line manager and the People team.",
+      "notes": "Handbook section 4, senior staff tier."
+    },
+    {
+      "question": "How many remote days per week are employees allowed?",
+      "relevant_sources": ["acme_handbook.txt"],
+      "reference_answer": "Up to three days per week, recorded in the workforce system by 17:00 the preceding working day."
+    },
+    {
+      "question": "What is the annual leave entitlement and how much can be carried over?",
+      "relevant_sources": ["acme_handbook.txt"],
+      "reference_answer": "25 days plus 8 public holidays; at most 5 unused days carry into the next year and must be used before 31 March."
+    },
+    {
+      "question": "How much does the company match on pension contributions?",
+      "relevant_sources": ["acme_handbook.txt"],
+      "reference_answer": "Up to 6 percent of base salary, vesting immediately."
+    },
+    {
+      "question": "Within how many days must an expense claim be submitted?",
+      "relevant_sources": ["acme_handbook.txt"],
+      "reference_answer": "Within 30 days; claims older than 60 days are not reimbursed."
+    },
+    {
+      "question": "What is the probationary period and can it be extended?",
+      "relevant_sources": ["acme_handbook.txt"],
+      "reference_answer": "Six months, extendable once by up to three months."
+    },
+    {
+      "question": "What is the minimum password length and how often must passwords be rotated?",
+      "relevant_sources": ["security_policy.txt"],
+      "reference_answer": "At least 14 characters, rotated every 180 days, with no reuse of the previous 12 passwords."
+    },
+    {
+      "question": "How quickly must a security incident be reported and to whom?",
+      "relevant_sources": ["security_policy.txt"],
+      "reference_answer": "Within 1 hour of discovery, to the Security team at security@acme.example."
+    },
+    {
+      "question": "When must the supervisory authority be notified of a personal data breach?",
+      "relevant_sources": ["security_policy.txt"],
+      "reference_answer": "Within 72 hours of becoming aware of the breach, where it is likely to result in a risk to data subjects."
+    },
+    {
+      "question": "What encryption standard is required for Confidential data at rest?",
+      "relevant_sources": ["security_policy.txt"],
+      "reference_answer": "AES-256 at rest and TLS 1.3 or later in transit."
+    },
+    {
+      "question": "How long do access tokens last and how long are refresh tokens valid?",
+      "relevant_sources": ["api_reference.txt"],
+      "reference_answer": "Access tokens expire after 3600 seconds; refresh tokens are valid for 30 days and are single use."
+    },
+    {
+      "question": "What are the API rate limits and what header tells a client when to retry?",
+      "relevant_sources": ["api_reference.txt"],
+      "reference_answer": "1000 requests per hour sustained and 50 per minute burst; HTTP 429 responses carry a Retry-After header."
+    },
+    {
+      "question": "What is the maximum page size for list endpoints?",
+      "relevant_sources": ["api_reference.txt"],
+      "reference_answer": "200 items; the default page size is 50."
+    },
+    {
+      "question": "How many times are failed webhook deliveries retried and what is the initial backoff?",
+      "relevant_sources": ["api_reference.txt"],
+      "reference_answer": "5 retries with exponential backoff starting at 30 seconds and doubling each attempt."
+    },
+    {
+      "question": "How long is an Idempotency-Key retained?",
+      "relevant_sources": ["api_reference.txt"],
+      "reference_answer": "24 hours; replaying the same key with a different body returns HTTP 409."
+    },
+    {
+      "question": "What is the capital of Portugal?",
+      "relevant_sources": [],
+      "expect_refusal": true,
+      "notes": "Refusal probe: the corpus contains nothing about geography."
+    },
+    {
+      "question": "What is the company share price today?",
+      "relevant_sources": [],
+      "expect_refusal": true,
+      "notes": "Refusal probe: live market data is outside the corpus and outside the model's knowledge window."
+    }
+  ]
+}
