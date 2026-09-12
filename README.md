@@ -26,6 +26,8 @@ the citations returned with each answer:
 
 **[`videos/local_llm_rag.mp4`](videos/local_llm_rag.mp4)** (70 MB)
 
+<video src="https://media.githubusercontent.com/media/selvaganesh19/Local-LLM-Document-Q-A-Chatbot-RAG-/main/videos/local_llm_rag.mp4" controls muted playsinline width="100%"></video>
+
 GitHub renders neither form of embed for a repository-hosted MP4: its Markdown
 sanitiser strips `<video>` tags, and the blob viewer downloads rather than
 streams. For an inline player in the rendered README, drag the file into a
