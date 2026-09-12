@@ -35,53 +35,6 @@ the citations returned with each answer:
 **▶ [Watch the demo](videos/local_llm_rag.mp4)** (70 MB, plays in a local
 Markdown previewer)
 
-### Why this is a link and not a player
-
-A repository-hosted MP4 cannot play inline in a GitHub README. This was
-verified against this repository rather than assumed, and there are three
-independent blockers - fixing any one of them is not enough:
-
-1. **GitHub's renderer strips the tag.** The `<video>` element survives the
-   Markdown render API but is removed by the live page pipeline. Checked
-   directly: the tag is on line 29 of the raw README, and the rendered page
-   contains zero `<video>` elements.
-2. **The LFS media host serves the wrong content type.**
-   `media.githubusercontent.com` returns the real 72,511,106 bytes, but as
-   `application/octet-stream` with `X-Content-Type-Options: nosniff`, so a
-   browser refuses to treat it as video. The `raw.githubusercontent.com` URL is
-   worse - it returns the 133-byte LFS *pointer* file as `text/plain`.
-3. **GitHub's Content-Security-Policy forbids those hosts.** The page's
-   `media-src` directive allowlists only `github.com`,
-   `*.githubusercontent.com` image subdomains, `gist.github.com`,
-   `github.githubassets.com`, and `github-production-user-asset-*.s3.amazonaws.com`.
-   Neither `media.githubusercontent.com` nor `raw.githubusercontent.com` is on
-   it, so playback would be blocked even if the first two problems were solved.
-
-### How to get an inline player
-
-Only one URL form works, and it comes from GitHub's own upload flow. The
-procedure takes about thirty seconds and has to be done in a browser:
-
-1. Open any issue or comment box on GitHub (a draft is fine, you can discard it).
-2. Drag `videos/local_llm_rag.mp4` into the text area and let the upload finish.
-3. Copy the `https://github.com/user-attachments/assets/<uuid>` URL it inserts.
-4. Paste it here as its own line:
-
-   ```markdown
-   https://github.com/user-attachments/assets/<uuid>
-   ```
-
-That URL redirects to `github-production-user-asset-*.s3.amazonaws.com`, which
-*is* on the CSP allowlist above and *is* served with a video content type -
-which is why it is the one form GitHub actually plays. Once it exists, replace
-this section's link with it; the tag itself is not needed, since a bare
-user-attachments URL on its own line renders as a player.
-
-Note that this uploads a second copy of the video to GitHub's attachment store,
-independent of the LFS copy in this repository. The repository copy remains the
-canonical one; the attachment exists only so the rendered README has something
-to play.
-
 ---
 
 ## Contents
