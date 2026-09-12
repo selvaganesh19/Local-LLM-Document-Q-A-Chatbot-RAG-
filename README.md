@@ -21,6 +21,14 @@ and generation is grounded in the retrieved passages.
 
 ## Demo
 
+<!--
+  PASTE THE PLAYER URL ON THE LINE BELOW, replacing the bolded link.
+  Upload videos/local_llm_rag.mp4 by dragging it into any GitHub issue or
+  comment box, then copy the https://github.com/user-attachments/assets/<uuid>
+  URL it inserts. Put that URL alone on the line; GitHub renders it as a
+  player and no HTML tag is needed.
+-->
+
 A recorded walkthrough - ingesting documents, asking questions, and inspecting
 the citations returned with each answer:
 
