@@ -32,8 +32,7 @@ and generation is grounded in the retrieved passages.
 A recorded walkthrough - ingesting documents, asking questions, and inspecting
 the citations returned with each answer:
 
-**▶ [Watch the demo](videos/local_llm_rag.mp4)** (70 MB, plays in a local
-Markdown previewer)
+https://github.com/user-attachments/assets/125f1eb0-de22-477a-8a0b-dcb2341ca705
 
 ---
 
