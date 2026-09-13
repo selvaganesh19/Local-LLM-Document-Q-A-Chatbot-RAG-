@@ -748,6 +748,7 @@ evaluation/                metrics, LLM judge, golden set, CLI + reports
 scripts/ingest_cli.py      command-line ingestion
 tests/                     hermetic pytest suite
 data/documents/            sample corpus (handbook, security policy, API reference)
+Input file/                directory containing input document files for ingestion (e.g. PDF documents)
 ```
 
 ---
